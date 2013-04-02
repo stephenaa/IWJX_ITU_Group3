@@ -2,6 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package dk.itu.iwxj.lapizzia;
 
 import dk.itu.iwxj.lapizzia.data.OrderDataBean;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  *
- * @author chwu
+ * @author chwu and others
  */
 public class Purchase extends HttpServlet {
 
