@@ -81,10 +81,11 @@ public class ProductDataBean {
         Connection connection = DatabaseManager.getConnection();
         PreparedStatement getProductsStmt;
         try {
-            getProductsStmt = connection.prepareStatement(
-                    "SELECT * FROM products ORDER BY name LIMIT ?,?");
+              getProductsStmt = connection.prepareStatement(
+                    "SELECT * FROM (SELECT ROW_NUMBER() OVER() AS rownum, products.* FROM products ORDER BY name ) AS tmp WHERE rownum > ? AND rownum <= ?");
+
             getProductsStmt.setInt(1, start);
-            getProductsStmt.setInt(2, count);
+            getProductsStmt.setInt(2, start + count);
 
             ResultSet results = getProductsStmt.executeQuery();
             while (results.next()) {
@@ -113,7 +114,9 @@ public class ProductDataBean {
         PreparedStatement getProductsStmt;
         try {
             getProductsStmt = connection.prepareStatement(
-                    "SELECT count(*) FROM products");
+                    "SELECT count(*) FROM products",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
             ResultSet results = getProductsStmt.executeQuery();            
             results.first();
             number = results.getInt(1);
