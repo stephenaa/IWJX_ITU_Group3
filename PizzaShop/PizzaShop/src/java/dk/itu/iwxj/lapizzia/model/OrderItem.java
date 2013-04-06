@@ -4,6 +4,7 @@
  */
 package dk.itu.iwxj.lapizzia.model;
 
+import dk.itu.iwxj.lapizzia.data.ProductDataBean;
 import java.io.Serializable;
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,16 +23,18 @@ public class OrderItem implements Serializable {
     private int totalPrice;
 
     public boolean initFromRequest(HttpServletRequest request) {
-        //line
-        setFkProductId(Integer.parseInt(request.getParameter("product_id")));
-        setName(request.getParameter("name"));
-        setPrice(Integer.parseInt(request.getParameter("price")));
-        if (request.getParameter("qty").isEmpty()) {
-            setQuantity(1);
-        } else {
-            setQuantity(Integer.parseInt(request.getParameter("qty")));
+        ProductDataBean productBean = ProductDataBean.getInstance();
+        Product pizza = productBean.get(Integer.parseInt(request.getParameter("product_id")));
+        if (pizza != null) {            
+            setFkProductId(pizza.getId());
+            setName(pizza.getName());
+            setPrice(pizza.getPrice());
+            if (request.getParameter("qty") == null || request.getParameter("qty").isEmpty()) {
+                setQuantity(1);
+            } else {
+                setQuantity(Integer.parseInt(request.getParameter("qty")));
+            }
         }
-
         return true;
     }
 

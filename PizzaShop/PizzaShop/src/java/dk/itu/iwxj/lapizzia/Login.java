@@ -71,9 +71,8 @@ public class Login extends HttpServlet {
     }
 
     
-    boolean handleLogin(HttpServletRequest request, HttpServletResponse response) {
-        UserDataBean userDataBean = new UserDataBean();
-        User user = userDataBean.getUser((String) request.getParameter("name"), (String) request.getParameter("password"));
+    boolean handleLogin(HttpServletRequest request, HttpServletResponse response) {        
+        User user = UserDataBean.getInstance().getUser((String) request.getParameter("name"), (String) request.getParameter("password"));
 
         request.getSession().setAttribute("flash", "");
         request.getSession().setAttribute("user", null);
@@ -101,8 +100,7 @@ public class Login extends HttpServlet {
             return false;
         }
         
-        UserDataBean userDataBean = new UserDataBean();
-        boolean result = userDataBean.add(user);
+        boolean result = UserDataBean.getInstance().add(user);
         try {
 
             if (result == true) {

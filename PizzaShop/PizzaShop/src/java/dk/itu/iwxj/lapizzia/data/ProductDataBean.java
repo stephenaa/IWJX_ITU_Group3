@@ -21,7 +21,21 @@ import java.util.logging.Logger;
  * @author chwu, sma
  */
 public class ProductDataBean {
+    private static ProductDataBean instance;
+    
+    public static ProductDataBean getInstance() {
+        if (instance == null) {
+            instance = new ProductDataBean();
+        }
+        return instance;
+    }
 
+    
+    private ProductDataBean () {
+        
+    }
+    
+    
     public boolean add(Product product) {
         try {
             Connection connection = DatabaseManager.getConnection();

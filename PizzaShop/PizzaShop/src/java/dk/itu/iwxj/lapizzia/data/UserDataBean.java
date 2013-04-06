@@ -19,7 +19,19 @@ import java.util.logging.Logger;
  * @author chwu
  */
 public class UserDataBean {
-
+    private static UserDataBean instance;
+    
+    private UserDataBean() {
+        
+    }
+    
+    public static UserDataBean getInstance() {
+        if (instance == null) {
+            instance = new UserDataBean();            
+        }
+        return instance;
+    }
+    
     public User getUser(String name, String password) {
         User user = null;
 

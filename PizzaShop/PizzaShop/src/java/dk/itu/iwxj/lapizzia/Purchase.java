@@ -101,11 +101,12 @@ public class Purchase extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-// reset msg
+
         String msg = "";
         HttpSession session = request.getSession();
         session.setAttribute("message", msg);
         String page = "purchase.jsp";
+        
         Map basket = (TreeMap) session.getAttribute("basket");
         if (request.getParameter("action").equalsIgnoreCase("AddToBasket")) {
             addToBasket(request, basket);
@@ -127,14 +128,14 @@ public class Purchase extends HttpServlet {
     public void addToBasket(HttpServletRequest request, Map basket) {
         //todo test are the quanty filled in with a number
         OrderItem line = new OrderItem();
-
+        System.out.println("Adding to basket" + request.getParameterMap());
+        System.out.println("Product id:" +  request.getParameter("product_id") + ", quantity:" + request.getParameter("qty"));
         request.getSession().setAttribute("message", "");
         line.initFromRequest(request);
         basket.put(line.getName(), line);
-
-
     }
 
+    
     public String checkout(HttpServletRequest request) {
         String page = "done.jsp";
         Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, "in checkout");

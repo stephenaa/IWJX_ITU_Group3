@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Products extends HttpServlet {
 
-    ProductDataBean productDataBean = new ProductDataBean();
+   // ProductDataBean productDataBean = new ProductDataBean();
     
     /**
      * Processes requests for both HTTP
@@ -49,7 +49,7 @@ public class Products extends HttpServlet {
                                
                 String[] elements = path.split("/");                
                 if (elements.length > 0) {
-                    pizza = productDataBean.get(Integer.parseInt(elements[0]));
+                    pizza = ProductDataBean.getInstance().get(Integer.parseInt(elements[0]));
                 } 
             }
             
@@ -103,7 +103,7 @@ public class Products extends HttpServlet {
             Product product = new Product();
             product.initFromRequest(request);
             
-            boolean result = productDataBean.add(product);
+            boolean result = ProductDataBean.getInstance().add(product);
             if (result) {
                 request.getSession().setAttribute("message", "Pizza was added!");
             } else {
@@ -116,7 +116,7 @@ public class Products extends HttpServlet {
          String id = request.getParameter("id");
          Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, "Deleting Pizza:" + id);
          if(id != null) {
-            if (productDataBean.del(Integer.parseInt(id))) {
+            if (ProductDataBean.getInstance().del(Integer.parseInt(id))) {
                 request.getSession().setAttribute("message", "Pizza was deleted!");
             } else
             {

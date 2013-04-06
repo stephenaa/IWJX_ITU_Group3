@@ -18,7 +18,8 @@ import java.util.logging.Logger;
  * @author chwu
  */
 public class OrderDataBean {
-        public boolean add(Order newOrder) {
+
+    public boolean add(Order newOrder) {
         try {
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement addOrderStmt =
@@ -29,7 +30,7 @@ public class OrderDataBean {
             addOrderStmt.setInt(1, newOrder.getOrderId());
             addOrderStmt.setInt(2, newOrder.getFkUserid());
             addOrderStmt.setString(3, newOrder.getComment());
-            addOrderStmt.setDate(4,newOrder.getDeliveryTime() );
+            addOrderStmt.setDate(4, newOrder.getDeliveryTime());
             addOrderStmt.executeUpdate();
 
             return true;
@@ -40,6 +41,7 @@ public class OrderDataBean {
 
         return false;
     }
+
     public boolean add(OrderItem newOrderLine) {
         try {
             Connection connection = DatabaseManager.getConnection();
