@@ -22,7 +22,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Products</servlet-name>
-        <url-pattern>/Products</url-pattern>
+        <url-pattern>/Products/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

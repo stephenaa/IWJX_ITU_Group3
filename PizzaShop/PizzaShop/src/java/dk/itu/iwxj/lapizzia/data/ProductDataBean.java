@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author chwu
+ * @author chwu, sma
  */
 public class ProductDataBean {
 
@@ -45,8 +45,40 @@ public class ProductDataBean {
         return false;
     }
 
-    
-     public List<Product> list() {
+    /**
+     * Retrieve a single Pizza from the database
+     *
+     * @param id productid of the Pizza
+     * @return Found Pizza as a Pizza object, null if no Pizza was found
+     */
+    public Product get(int id) {
+        Connection connection = DatabaseManager.getConnection();
+        Product product = null;
+
+        try {
+            PreparedStatement getProductsStmt = connection.prepareStatement(
+                    "SELECT * FROM products WHERE productid = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+            getProductsStmt.setInt(1, id);
+            ResultSet results = getProductsStmt.executeQuery();
+            if (results != null && results.first()) {
+                product = new Product();
+                product.setId(results.getInt("productid"));
+                product.setName(results.getString("name"));
+                product.setDescription(results.getString("description"));
+                product.setPrice(results.getInt("price"));
+            }
+            results.close();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return product;
+    }
+
+    public List<Product> list() {
         List<Product> list = new ArrayList<Product>();
 
         Connection connection = DatabaseManager.getConnection();
@@ -63,7 +95,7 @@ public class ProductDataBean {
                 product.setName(results.getString("name"));
                 product.setDescription(results.getString("description"));
                 product.setPrice(results.getInt("price"));
-                
+
                 list.add(product);
             }
             results.close();
@@ -73,15 +105,14 @@ public class ProductDataBean {
 
         return list;
     }
-    
-        
+
     public List<Product> list(int start, int count) {
         List<Product> list = new ArrayList<Product>();
 
         Connection connection = DatabaseManager.getConnection();
         PreparedStatement getProductsStmt;
         try {
-              getProductsStmt = connection.prepareStatement(
+            getProductsStmt = connection.prepareStatement(
                     "SELECT * FROM (SELECT ROW_NUMBER() OVER() AS rownum, products.* FROM products ORDER BY name ) AS tmp WHERE rownum > ? AND rownum <= ?");
 
             getProductsStmt.setInt(1, start);
@@ -106,18 +137,17 @@ public class ProductDataBean {
         return list;
     }
 
-    
-    public int numberOfProducts() {        
+    public int numberOfProducts() {
         Connection connection = DatabaseManager.getConnection();
         int number = 0;
-        
+
         PreparedStatement getProductsStmt;
         try {
             getProductsStmt = connection.prepareStatement(
                     "SELECT count(*) FROM products",
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
-            ResultSet results = getProductsStmt.executeQuery();            
+            ResultSet results = getProductsStmt.executeQuery();
             results.first();
             number = results.getInt(1);
             results.close();
@@ -128,7 +158,6 @@ public class ProductDataBean {
         return number;
     }
 
-    
     public boolean del(int id) {
         try {
             Connection connection = DatabaseManager.getConnection();
@@ -136,16 +165,15 @@ public class ProductDataBean {
                     connection.prepareStatement("DELETE FROM products WHERE productid=?");
 
             delProductStmt.setInt(1, id);
-            
+
             if (delProductStmt.executeUpdate() != 0) {
                 return true;
-            }            
-            
+            }
+
         } catch (SQLException ex) {
             Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-                    
+        }
+
         return false;
     }
-    
 }

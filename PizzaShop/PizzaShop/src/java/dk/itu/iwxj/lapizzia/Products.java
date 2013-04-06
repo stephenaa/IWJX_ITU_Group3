@@ -9,6 +9,7 @@ import dk.itu.iwxj.lapizzia.data.UserDataBean;
 import dk.itu.iwxj.lapizzia.model.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -36,19 +37,32 @@ public class Products extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        
         PrintWriter out = response.getWriter();
+                        Product pizza = null;
         try {
+            if (request.getPathInfo() != null) {
+
+                
+                // We skip the first slash of the path information, makes the elements be arranged nicely
+                String path = request.getPathInfo().substring(1);
+                               
+                String[] elements = path.split("/");                
+                if (elements.length > 0) {
+                    pizza = productDataBean.get(Integer.parseInt(elements[0]));
+                } 
+            }
             
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Product</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Product at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            if(pizza != null) {                     
+                response.setContentType("text/html;charset=UTF-8");
+                out.println(pizza.toHtml());
+            }
+            else {
+                response.sendError(404);
+            }
+            
+            
+            
         } finally {            
             out.close();
         }
@@ -82,7 +96,7 @@ public class Products extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequest(request, response);
+        
         request.getSession().setAttribute("message", "");
         
         if ("Add".compareToIgnoreCase(request.getParameter("action")) == 0) {

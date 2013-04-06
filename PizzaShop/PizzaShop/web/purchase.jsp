@@ -33,11 +33,49 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="scripts/pizzalib.js"></script>
+    
+    <script language="javascript" type="text/javascript" >
+    
+    function initPage() {
+        // Install onclick handlers etc.
+        
+        table = document.getElementById('orderTable');
+        var elements = table.getElementsByTagName("a");
+        
+        for(var i=0; i<elements.length; i++) {            
+            elements[i].onmouseover = function(e) {
+                var target = (e.target) ? e.target : e.srcElement;
+                
+                // TODO:
+                // I am trying to archive some closure ensurance that the callback
+                // has access to the rigt XMLHttpRequest Object.
+                // Does this work??
+                http = getHttp();  
+                request = "/PizzaShop/Products/" + target.id;
+                
+                // The callback passed to sendRequest is being constructed as an anonymous function below
+                sendRequest(http,request, function() {
+                    if (http.readyState === 4) {
+                        div = document.getElementById("descriptionDiv");
+                        if(div) {
+                            div.innerHTML = http.responseText;
+                        }
+                        
+                    }
+                });
+            };
+      }       
+    }    
+    
+    </script>
+    
+    
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>La Pizzashop </title>
     </head>
-    <body>
+    <body onLoad="initPage();">
         <h1>La Pizzashop </h1>
         <div>
             <%= session.getAttribute("message")%>
@@ -51,24 +89,22 @@
         %>
 
         <h2><%= pizze.size()%> deliziosa pizza per il vostro stomaco:</h2>
-        <table border="1" class="pizzalist">
-            <tr><th>No </th><th>Pizza</th><th>Description</th><th>Price</th><th>Quantity</th></tr>
+        <div style="float:left;">
+        <table border="0" class="pizzalist" id="orderTable">
+            <tr><th>No </th><th>Pizza</th><th>Price</th><th>&nbsp;</th></tr>
             <%
                 int pizzeShown = 0;
                 for (Product p : pizze) {
                     pizzeShown++;
-                    out.println("<td><form action=\"Purchase\" method=\"post\">");
+                    out.println("<td><form action=\"Purchase\" method=\"post\" name=\"orderForm-" + p.getId() + "\">");
                     out.println("<tr>");
                     out.println("<td>" + p.getId() + "</td>");
                     out.println("<input type=\"hidden\" name=\"product_id\" value=\"" + p.getId() + "\">");
-                    out.println("<td>" + p.getName() + "</td>");
-                    out.println("<input type=\"hidden\" name=\"name\" value=\"" + p.getName() + "\">");
-                    out.println("<td>" + p.getDescription() + "</td>");
-                    out.println("<input type=\"hidden\" name=\"description\" value=\"" + p.getDescription() + "\">");
-                    out.println("<td>" + p.getPrice() + "</td>");
-                    out.println("<input type=\"hidden\" name=\"price\" value=\"" + p.getPrice() + "\">");
+                    out.println("<td><a href=\"#\" id=\"" + p.getId() + "\">" + p.getName() + "</a></td>");
+                    out.println("<td>" + p.getPrice() + ",-</td>");                    
                     out.println("<td><input type=\"text\" name=\"qty\" size=\"3\">");
                     out.println("<input type=\"submit\" value=\"AddToBasket\" name=\"action\"></td>");
+                                        
                     out.println("</tr>");
                     out.println("</form></td>");
                 }
@@ -76,6 +112,16 @@
             %>                            
 
         </table>
+            
+        </div>
+        
+            <!-- The 'descriptionDiv' div will be populated through AJAX -->
+            <div id="descriptionDiv" style="float:left;width:20%;padding-left: 3%">
+            &nbsp;
+            </div>
+            
+            
+            <div style="clear:both;"></div>
             
             <p><%= pizzeShown %> of <%= totalPizze %> total Pizzas shown. Page <%= currentPage %> of <%= totalPages %></p>
             <div>

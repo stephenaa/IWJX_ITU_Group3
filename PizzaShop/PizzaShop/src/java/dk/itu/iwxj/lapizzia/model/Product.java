@@ -4,7 +4,9 @@
  */
 package dk.itu.iwxj.lapizzia.model;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -23,6 +25,42 @@ public class Product implements Serializable{
         setDescription(request.getParameter("description"));
         setPrice(Integer.parseInt(request.getParameter("price")));
         return true;       
+    }
+
+    
+    
+    /**
+     * Constructs an XML representation of the Pizza
+     * @return XML representing the Pizza
+     */
+    public String toXml() {
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
+        
+        printer.printf("<pizza id='%d'>", this.id);
+        printer.printf("<name>%s</name>", this.name);
+        printer.printf("<description>%s</description>", this.description);
+        printer.printf("<price>%s</price>", this.price);
+        printer.printf("</pizza>");
+        
+        return writer.toString();
+    }
+    
+
+    
+    /**
+     * Constructs a HTML representation of the Pizza
+     * @return  The HTML
+     */
+    public String toHtml() {
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
+        
+        printer.printf("<strong>%s</strong>", this.name);
+        printer.printf("<p>%s</p>", this.description);
+        printer.printf("<br/><strong><span style=\"font-size:+3;\">DKK %s,-</span></strong>", this.price);
+        
+        return writer.toString();
     }
 
     /**
