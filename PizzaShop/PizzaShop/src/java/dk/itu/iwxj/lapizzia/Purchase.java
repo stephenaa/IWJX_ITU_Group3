@@ -30,8 +30,7 @@ import javax.servlet.http.HttpSession;
  * @author chwu and others
  */
 public class Purchase extends HttpServlet {
-
-    private OrderDataBean orderUpdate = new OrderDataBean();
+   
 
     /**
      * Processes requests for both HTTP
@@ -153,13 +152,13 @@ public class Purchase extends HttpServlet {
             Order order = new Order();
             order.initFromRequest(request, user);
             order.setOrderId(keys);
-            orderUpdate.add(order);
+            OrderDataBean.getInstance().add(order);
             Iterator entries = basket.entrySet().iterator();
             while (entries.hasNext()) {
                 Entry thisEntry = (Entry) entries.next();
                 OrderItem i = (OrderItem) thisEntry.getValue();
                 i.setFkOrderId(keys);
-                orderUpdate.add(i);
+                OrderDataBean.getInstance().add(i);
                 Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, "processing " + i.getName());
             }
             //TODO error handling of OrderDataBean

@@ -18,7 +18,20 @@ import java.util.logging.Logger;
  * @author chwu
  */
 public class OrderDataBean {
-
+    private static OrderDataBean instance;
+    
+    private OrderDataBean() {
+        
+    }
+    
+    public static OrderDataBean getInstance() {
+        if (instance == null) {
+            instance = new OrderDataBean();
+        }
+        return instance;
+    }
+    
+    
     public boolean add(Order newOrder) {
         try {
             Connection connection = DatabaseManager.getConnection();
