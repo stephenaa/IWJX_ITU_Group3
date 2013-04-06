@@ -7,9 +7,6 @@ package dk.itu.iwxj.lapizzia;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.naming.InitialContext;
 
 /**
  *
@@ -21,20 +18,32 @@ public class DatabaseManager {
 
     public static Connection getConnection() {
         if (connection == null) {
-            try {
+           // try {
+
                 // load the MySql driver
-                Class.forName("com.mysql.jdbc.Driver");
+                //Class.forName("com.mysql.jdbc.Driver");
 
                 // connect to the database               
-                connection = DriverManager.getConnection("jdbc:mysql://mysql.itu.dk/chwu", "chwu", "wu1234");
-                 //connection = DriverManager.getConnection("jdbc:mysql://localhost/LAPIZZERIA", "sma", "lalle");
+                //connection = DriverManager.getConnection("jdbc:mysql://mysql.itu.dk/chwu", "chwu", "wu1234");
+                //connection = DriverManager.getConnection("jdbc:mysql://localhost/LAPIZZERIA", "sma", "lalle");
                 
-            } catch (Exception ex) {
-                Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
-                return null;           
-            }
-        }
 
-        return connection;
+
+                // } catch (Exception ex) {
+                //    Logger.getLogger(DatabaseManager.class.getName()).log(Level.SEVERE, null, ex);
+                //    return null;           
+                //}
+                try {
+                    Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+                    connection = DriverManager.getConnection("jdbc:derby://localhost:1527/LaPizzeria;user=pizza;password=gorgonzola");
+                } catch (ClassNotFoundException e) {
+                    System.out.println("Unable to load the driver class");
+                }
+                catch (SQLException e2){
+                       System.out.println("SQL Exception:" + e2);
+                }
+            }
+
+            return connection;
+        }
     }
-}
