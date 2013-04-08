@@ -12,6 +12,10 @@
         <servlet-name>Products</servlet-name>
         <servlet-class>dk.itu.iwxj.lapizzia.Products</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Users</servlet-name>
+        <servlet-class>dk.itu.iwxj.lapizzia.Users</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>Products</servlet-name>
         <url-pattern>/Products/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Users</servlet-name>
+        <url-pattern>/Users/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

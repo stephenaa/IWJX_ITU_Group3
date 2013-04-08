@@ -21,12 +21,42 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
+    <script src="scripts/pizzalib.js"></script>
+    
+     <script language="javascript" type="text/javascript" >
+    
+    function initPage() {                
+        http = getHttp();          
+        request = "<% out.print("/PizzaShop/Users/" + user.getPhone()); %>";
+                          
+        field = document.getElementById('customer_name');             
+        field.value = "Retreiving...";
+        // The callback passed to sendRequest is being constructed as an anonymous function below                
+
+        sendRequest(http,request, function() {                    
+          if (http.readyState === 4 && http.status === 200) {                        
+                  if (window.DOMParser) {
+                   parser = new DOMParser();
+                   xmlDoc = parser.parseFromString(http.responseText,"text/xml");
+                  } else {
+                      xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+                      xmlDoc.async = false;
+                      xmlDoc.loadXML(http.responseText);
+                  }
+                  document.getElementById('customer_name').value = xmlDoc.getElementsByTagName("name")[0].childNodes[0].nodeValue;                  
+                  document.getElementById('customer_address').value = xmlDoc.getElementsByTagName("address")[0].childNodes[0].nodeValue;
+                  document.getElementById('customer_zip').value = xmlDoc.getElementsByTagName("zipcode")[0].childNodes[0].nodeValue;                  
+              }
+        });        
+    }
+    </script>
+    
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>La Pizzashop </title>
     </head>
 
-    <body>
+    <body onLoad="initPage();">
         <h2>Check out</h2>
         <div>
             <% if (user == null) {
@@ -84,5 +114,14 @@
                     <tr><td colspan="5" align="right"><input type="submit" name="action" value="pay"</td></tr>   
                 </form> 
             </table>
+                    
+                            <div>
+                                Name:<br/>
+                                <input type="text" name="customer_name" id="customer_name"/><br/>
+                                Address:</br>
+                                <input type="text" name="customer_address" id="customer_address"/><br/>
+                                Zip:</br>
+                                <input type="text" name="customer_zip" id="customer_zip"/><br/>
+                            </div>
     </body>
 </html>

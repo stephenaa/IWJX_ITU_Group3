@@ -5,6 +5,7 @@
 package dk.itu.iwxj.lapizzia.data;
 
 import dk.itu.iwxj.lapizzia.DatabaseManager;
+import dk.itu.iwxj.lapizzia.model.Product;
 import dk.itu.iwxj.lapizzia.model.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -94,4 +95,34 @@ public class UserDataBean {
 
         return false;
     }
+    
+    public User get_by_phone(String phone){
+        Connection connection = DatabaseManager.getConnection();
+        User user = null;
+
+        try {
+            PreparedStatement getProductsStmt = connection.prepareStatement(
+                    "SELECT * FROM users WHERE phone = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
+
+            getProductsStmt.setString(1, phone);
+            ResultSet results = getProductsStmt.executeQuery();
+            if (results != null && results.first()) {
+                user = new User();
+                user.setUserid(results.getInt("userid"));
+                user.setPhone(results.getString("phone"));
+                user.setUsername(results.getString("name"));
+                user.setAddress(results.getString("address"));
+                user.setZipcode(results.getString("zipcode"));                
+                user.setEmail(results.getString("email"));                
+            }
+            results.close();
+        } catch (Exception ex) {
+            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println("Retreived user:"+user);
+        return user;                
+    }
+    
 }

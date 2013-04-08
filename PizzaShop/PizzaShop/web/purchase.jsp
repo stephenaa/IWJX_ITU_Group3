@@ -12,6 +12,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="dk.itu.iwxj.lapizzia.model.Product"%>
 <%@page import="java.util.List"%>
+
 <%
     if (session.getAttribute("message") == null) {
         session.setAttribute("message", "");
@@ -56,7 +57,7 @@
                 
                 // The callback passed to sendRequest is being constructed as an anonymous function below
                 sendRequest(http,request, function() {
-                    if (http.readyState === 4) {
+                    if (http.readyState === 4 && http.status === 200) {
                         div = document.getElementById("descriptionDiv");
                         if(div) {
                             div.innerHTML = http.responseText;

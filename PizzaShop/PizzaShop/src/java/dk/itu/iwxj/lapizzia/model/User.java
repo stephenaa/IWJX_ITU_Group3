@@ -4,7 +4,9 @@
  */
 package dk.itu.iwxj.lapizzia.model;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -113,6 +115,25 @@ public class User implements Serializable{
         return "User{" + "userid=" + getUserid() + ", username=" + getUsername() + ", password=" + getPassword() + ", address=" + getAddress() + ", zipcode=" + getZipcode() + ", phone=" + getPhone() + ", email=" + getEmail() + ", role=" + getRole() + '}';
     }
 
+    /**
+     * Constructs an XML representation of the Pizza
+     * @return XML representing the Pizza
+     */
+    public String toXml() {
+        StringWriter writer = new StringWriter();
+        PrintWriter printer = new PrintWriter(writer);
+        
+        printer.printf("<user id='%d'>", this.userid);
+        printer.printf("<name>%s</name>", this.username);
+        printer.printf("<email>%s</email>", this.email);
+        printer.printf("<phone>%s</phone>", this.phone);
+        printer.printf("<address>%s</address>", this.address);
+        printer.printf("<zipcode>%s</zipcode>", this.zipcode);
+        printer.printf("</user>");
+        
+        return writer.toString();
+    }
+    
     /**
      * @return the userid
      */

@@ -23,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Products extends HttpServlet {
 
-   // ProductDataBean productDataBean = new ProductDataBean();
-    
+    // ProductDataBean productDataBean = new ProductDataBean();
     /**
      * Processes requests for both HTTP
      * <code>GET</code> and
@@ -37,33 +36,30 @@ public class Products extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         PrintWriter out = response.getWriter();
-                        Product pizza = null;
+        Product pizza = null;
         try {
             if (request.getPathInfo() != null) {
-
-                
                 // We skip the first slash of the path information, makes the elements be arranged nicely
                 String path = request.getPathInfo().substring(1);
-                               
-                String[] elements = path.split("/");                
+
+                String[] elements = path.split("/");
                 if (elements.length > 0) {
                     pizza = ProductDataBean.getInstance().get(Integer.parseInt(elements[0]));
-                } 
+                }
             }
-            
-            if(pizza != null) {                     
+
+            if (pizza != null) {
                 response.setContentType("text/html;charset=UTF-8");
                 out.println(pizza.toHtml());
-            }
-            else {
+            } else {
                 response.sendError(404);
             }
-            
-            
-            
-        } finally {            
+
+
+
+        } finally {
             out.close();
         }
     }
@@ -96,36 +92,35 @@ public class Products extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.getSession().setAttribute("message", "");
-        
+
         if ("Add".compareToIgnoreCase(request.getParameter("action")) == 0) {
             Product product = new Product();
             product.initFromRequest(request);
-            
+
             boolean result = ProductDataBean.getInstance().add(product);
             if (result) {
                 request.getSession().setAttribute("message", "Pizza was added!");
             } else {
                 request.getSession().setAttribute("message", "Error adding Pizza!");
-            }                    
-        }
-        
-                
-        if ("Delete".compareToIgnoreCase(request.getParameter("action")) == 0) {
-         String id = request.getParameter("id");
-         Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, "Deleting Pizza:" + id);
-         if(id != null) {
-            if (ProductDataBean.getInstance().del(Integer.parseInt(id))) {
-                request.getSession().setAttribute("message", "Pizza was deleted!");
-            } else
-            {
-                request.getSession().setAttribute("message", "Unable to delete Piza.");
-            }      
-         }
+            }
         }
 
-        response.sendRedirect("admin.jsp");            
+
+        if ("Delete".compareToIgnoreCase(request.getParameter("action")) == 0) {
+            String id = request.getParameter("id");
+            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, "Deleting Pizza:" + id);
+            if (id != null) {
+                if (ProductDataBean.getInstance().del(Integer.parseInt(id))) {
+                    request.getSession().setAttribute("message", "Pizza was deleted!");
+                } else {
+                    request.getSession().setAttribute("message", "Unable to delete Piza.");
+                }
+            }
+        }
+
+        response.sendRedirect("admin.jsp");
     }
 
     /**
