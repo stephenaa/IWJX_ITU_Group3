@@ -45,9 +45,8 @@
 
 <!-- Get the list of pizze to show -->
 <%
-    ProductDataBean pdb = new ProductDataBean();
-    List<Product> pizze = pdb.list((currentPage-1)*10,10);
-    int totalPizze = pdb.numberOfProducts();
+    List<Product> pizze =  ProductDataBean.getInstance().list((currentPage-1)*10,10);
+    int totalPizze = ProductDataBean.getInstance().numberOfProducts();
     int totalPages = totalPizze / 10;    
 %>
 
