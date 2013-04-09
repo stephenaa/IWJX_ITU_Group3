@@ -19,6 +19,15 @@ function sendRequest(http, action, responseHandler) {
 }
 
 
+function sendPUTRequest(http, action, data, responseHandler) {
+  
+  http.open("PUT", action);
+  http.onreadystatechange = responseHandler;
+  http.setRequestHeader("Content-type","application/xml");
+  http.send(data);  
+}
+
+
 
 
 

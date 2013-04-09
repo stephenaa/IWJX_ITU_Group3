@@ -7,15 +7,19 @@ package dk.itu.iwxj.lapizzia;
 import dk.itu.iwxj.lapizzia.data.ProductDataBean;
 import dk.itu.iwxj.lapizzia.data.UserDataBean;
 import dk.itu.iwxj.lapizzia.model.Product;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -121,6 +125,46 @@ public class Products extends HttpServlet {
         }
 
         response.sendRedirect("admin.jsp");
+    }
+    
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        PrintWriter out = response.getWriter();
+        Product pizza = null;
+        try {
+            InputStream body = request.getInputStream();
+
+            if (request.getPathInfo() != null) {
+                // We skip the first slash of the path information, makes the elements be arranged nicely
+                String path = request.getPathInfo().substring(1);
+
+                String[] elements = path.split("/");
+                if (elements.length > 0) {
+                    pizza = ProductDataBean.getInstance().get(Integer.parseInt(elements[0]));
+                }
+            }
+
+            if (pizza != null) {
+                Product updatedPizza = pizza.initFromXml(pizza, body);
+                if (updatedPizza != null) {
+
+                    ProductDataBean.getInstance().update(updatedPizza);
+                }
+                response.setContentType("application/xml;charset=UTF-8");
+                out.println("<pizza>" + pizza.toXml() + "</pizza>");
+            } else {
+                response.sendError(404);
+            }
+
+
+
+        } finally {
+            out.close();
+        }
+
     }
 
     /**

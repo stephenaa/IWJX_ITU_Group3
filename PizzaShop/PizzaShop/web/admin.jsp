@@ -67,7 +67,7 @@
             <h2>Pizze a vendite (<%= pizze.size() %> in tutti):</h2>
             
             <p>
-            <table class="pizzalist">
+            <table class="pizzalist" id="productTable"">
             <tr><th>Pizza</th><th>Description</th><th>Price</th><th></th></tr>
             <%        
               int pizzeShown = 0;                 
@@ -76,7 +76,7 @@
                   out.println("<tr>");
                   out.println("<td>" + p.getName() + "</td>");
                   out.println("<td>" + p.getDescription() + "</td>");
-                  out.println("<td>" + p.getPrice() + "</td>");
+                  out.println("<td><span id=\"" + p.getId() + "\">" + p.getPrice() + "</span>,-</td>");
                   
                   out.println("<td><form action=\"Products\" method=\"post\">");
                   out.println("<input type=\"hidden\" name=\"id\" value=\"" + p.getId() +"\">");
@@ -121,4 +121,72 @@
             </form>
         </div>
     </body>
+
+    
+    <script src="scripts/pizzalib.js"></script>
+    
+    <script language="javascript" type="text/javascript" >
+
+        function initPage() {
+            table = document.getElementById('productTable');
+            var elements = table.getElementsByTagName("span");
+        
+            for(var i=0; i<elements.length; i++) {            
+                
+                elements[i].onclick= function(e) {
+                    var target = (e.target) ? e.target : e.srcElement;                    
+                    var newcontent = document.createElement("input");
+                    
+                    savedOnclick = target.onclick;
+                    target.onclick = null;
+                    
+                    newcontent.type = "text";
+                    newcontent.size = 3;
+                    newcontent.id = target.id;
+                    newcontent.value = target.innerHTML;
+                    
+                    newcontent.onkeypress = function(e) {
+                        if (e.keyCode == 13) {
+                            var t = (e.target) ? e.target : e.srcElement;
+
+                            var content = document.createElement("span");
+                            content.id = t.id;
+                            content.innerHTML = t.value;
+                            content.style.color="blue";
+                            target.replaceChild(content,target.childNodes[0]);
+                                      
+                            http = getHttp();  
+                            request = "/PizzaShop/Products/" + t.id;
+
+                            // The callback passed to sendRequest is being constructed as an anonymous function below
+                            xml = "<pizza><price>" + t.value + "</price></pizza>";
+                            sendPUTRequest(http, request, xml, function() {
+                                if (http.readyState === 4) {
+                                    if (http.status === 200) {                                    
+                                        content.style.color = "";
+                                        alert("Price was changed");
+                                    } else {
+                                        content.style.color = "red";
+                                        alert("Error changing prize!");
+                                    }
+                                }
+                                target.onclick = savedOnclick;
+                            });
+                      
+                      
+                        }
+                        
+                    };
+
+                    target.replaceChild(newcontent,target.childNodes[0]);
+
+                };      
+                
+                
+            }                
+        };
+
+        initPage();
+    </script>
+    
 </html>

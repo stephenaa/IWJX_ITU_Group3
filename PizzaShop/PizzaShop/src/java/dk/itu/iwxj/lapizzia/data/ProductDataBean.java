@@ -190,4 +190,34 @@ public class ProductDataBean {
 
         return false;
     }
+    
+    /**
+     * Update product in database
+     * TODO: Extend to handle all properties of the model
+     * @param product
+     * @return 
+     */
+    public boolean update(Product product)
+    {
+        try {
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement stmt =
+                    connection.prepareStatement("UPDATE products SET price = ?, name = ?, description = ? WHERE productid=?");
+
+            stmt.setInt(1, product.getPrice());
+            stmt.setString(2,product.getName());
+            stmt.setString(3,product.getDescription());
+            stmt.setInt(4, product.getId());
+
+            if (stmt.executeUpdate() != 0) {
+                return true;
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+      return true;   
+    }
+    
 }
