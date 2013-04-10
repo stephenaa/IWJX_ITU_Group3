@@ -133,10 +133,19 @@
         
             for(var i=0; i<elements.length; i++) {            
                 
-                elements[i].onclick= function(e) {
-                    var target = (e.target) ? e.target : e.srcElement;                    
-                    var newcontent = document.createElement("input");
-                    
+                elements[i].onclick= function(e) {                             
+                    var target;
+                    if (!e) 
+                        var e = window.event;
+                    if (e.target) 
+                        target = e.target;
+                     else 
+                         if (e.srcElement) 
+                             target = e.srcElement;
+                    if (target.nodeType == 3) 
+                        target = target.parentNode;
+                           
+                    var newcontent = document.createElement("input");                    
                     savedOnclick = target.onclick;
                     target.onclick = null;
                     
@@ -146,20 +155,28 @@
                     newcontent.value = target.innerHTML;
                     
                     newcontent.onkeypress = function(e) {
+                        if (!e) 
+                            var e = window.event;
                         if (e.keyCode == 13) {
-                            var t = (e.target) ? e.target : e.srcElement;
-
+                            var target2;
+                            if (!e) var e = window.event;
+                                if (e.target) target2 = e.target;
+                            else
+                                if (e.srcElement) target2 = e.srcElement;
+                            if (target2.nodeType == 3)
+                                target2 = target2.parentNode;
+                           
                             var content = document.createElement("span");
-                            content.id = t.id;
-                            content.innerHTML = t.value;
+                            content.id = target2.id;
+                            content.innerHTML = target2.value;
                             content.style.color="blue";
                             target.replaceChild(content,target.childNodes[0]);
                                       
                             http = getHttp();  
-                            request = "/PizzaShop/Products/" + t.id;
+                            request = "/PizzaShop/Products/" + target2.id;
 
                             // The callback passed to sendRequest is being constructed as an anonymous function below
-                            xml = "<pizza><price>" + t.value + "</price></pizza>";
+                            xml = "<pizza><price>" + target2.value + "</price></pizza>";
                             sendPUTRequest(http, request, xml, function() {
                                 if (http.readyState === 4) {
                                     if (http.status === 200) {                                    
