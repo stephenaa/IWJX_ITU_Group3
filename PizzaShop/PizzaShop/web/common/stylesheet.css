@@ -50,11 +50,13 @@ a:hover {
     text-decoration: none;
 }
 .red {
-color: #FF3333;
-text-decoration: none;
-font-weight: normal;
+    color: #FF3333;
+    text-decoration: none;
+    font-weight: normal;
 }
-
+.p{
+    color: #FF3333;
+}
 .foodname {
     color: #000000;
     font-size: 9pt;

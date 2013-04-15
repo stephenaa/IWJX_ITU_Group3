@@ -11,30 +11,11 @@
 <%@page import="java.util.Map.Entry"%>
 <%@page import="dk.itu.iwxj.lapizzia.model.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%
-    if (session.getAttribute("message") == null) {
-        session.setAttribute("message", "");
-    }
-    User user = (User) session.getAttribute("user");
-%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Your receipt</title>
-    </head>
-    <body>
-        <div>
-            <% if (user == null) {
-                    out.println("<a href=\"login.jsp\">Login</a>");
-                }
-                String emptySpace = "&nbsp;";
-            %>
-            <%= session.getAttribute("message")%>
-        </div>
-        <h1>Thx, your payment of this order went fine.</h1>
+<%@include file="/common/top.jsp" %>  
+<tr><td foodname>&nbsp;</td></tr>
+        <h3>Thx, your payment of this order went fine.</h3>
         <table>    
-            <%
+            <% String emptySpace = "&nbsp;";
                 Map shopcart = (TreeMap) session.getAttribute("basket");
             %>     
             <tr><th>No</th><th>Pizza</th><th>Qty</th><th>Price</th><th>Total</th></tr>
@@ -59,11 +40,8 @@
                 out.println("<tr><td colspan=\"5\" align=\"right\">" + amountTotalInBasket + "</td><tr>");
 
             %>
-        </table>
-        <br>
-        <table >
-            <h2>Your order is ready for Dionisio to procces:</h2>
-            <tr><td>Within 25 plus time to your adresse deliver you order at:</td></tr>
+            <h3>Your order is ready for Dionisio to procces:</h3>
+            <tr><td>Within 15 min. plus time to your adresse deliver you order at:</td></tr>
             <%
                 out.println("<tr>");
                 out.println("<tr><td>" + user.getUsername() + "</td></tr>");
@@ -72,5 +50,4 @@
             %> 
 
         </table>
-    </body>
-</html>
+  <jsp:include page="/common/footer.jsp"/>  

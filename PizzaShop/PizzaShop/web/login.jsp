@@ -4,30 +4,12 @@
     Author     : chwu
 --%>
 
-<%
-    if (session.getAttribute("flash") == null) {
-        session.setAttribute("flash", "");
-    }
-%>
+<%@include file="/common/top.jsp" %>  
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <div>
-            <%= session.getAttribute("flash")%>
-        </div>
-
-        <h1>Pizza Login!</h1>
+        <h3>Pizza Login</h3>
         <form action="Login" method="post">
-            Username: <input type="text" name="name" /></p> 
-        Password: <input type="password" name="password" />
-        <br />
-        <input type="submit" value="Login" name="action" />
+        <tr><td>Username:<input type="text" name="name"/> </td></tr>
+        <tr><td>Password:&nbsp;<input type="password" name="password" /></td></tr>
+        <tr><td><input type="submit" value="Login" name="action" /></td></tr>
     </form>
-</body>
-</html>
+  <jsp:include page="/common/footer.jsp"/>

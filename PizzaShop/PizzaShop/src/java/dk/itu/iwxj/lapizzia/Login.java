@@ -5,15 +5,19 @@
 package dk.itu.iwxj.lapizzia;
 
 import dk.itu.iwxj.lapizzia.data.UserDataBean;
+import dk.itu.iwxj.lapizzia.model.OrderItem;
 import dk.itu.iwxj.lapizzia.model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -65,7 +69,13 @@ public class Login extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         //processRequest(request, response);
-        request.getSession().setAttribute("flash", "");
+        Map<String, OrderItem> basket;
+        HttpSession session = request.getSession();
+        if (session.getAttribute("basket") == null) {
+            basket = new TreeMap<String, OrderItem>();
+            session.setAttribute("basket", basket);
+        }
+        request.getSession().setAttribute("message", "");
         request.getSession().setAttribute("user", null);                
         response.sendRedirect("login.jsp");
     }
@@ -74,15 +84,20 @@ public class Login extends HttpServlet {
     boolean handleLogin(HttpServletRequest request, HttpServletResponse response) {        
         User user = UserDataBean.getInstance().getUser((String) request.getParameter("name"), (String) request.getParameter("password"));
 
-        request.getSession().setAttribute("flash", "");
+        request.getSession().setAttribute("message", "");
         request.getSession().setAttribute("user", null);
-        
+        HttpSession session = request.getSession();
+        Map<String, OrderItem> basket;
+        if (session.getAttribute("basket") == null) {
+            basket = new TreeMap<String, OrderItem>();
+            session.setAttribute("basket", basket);
+        }
         try {
             if (user != null) {
                 request.getSession().setAttribute("user", user);
-                response.sendRedirect("index.jsp");
+                response.sendRedirect("purchase.jsp");
             } else {
-                request.getSession().setAttribute("flash", "Login failed - retry!");
+                request.getSession().setAttribute("message", "Login failed - retry!");
                 response.sendRedirect("login.jsp");
             }
         } catch (IOException ex) {
@@ -104,9 +119,9 @@ public class Login extends HttpServlet {
         try {
 
             if (result == true) {
-                request.getSession().setAttribute("flash", "User was added!");
+                request.getSession().setAttribute("message", "User was added!");
             } else {
-                request.getSession().setAttribute("flash", "Error adding user!");
+                request.getSession().setAttribute("message", "Error adding user!");
             }
 
             response.sendRedirect("login.jsp");
@@ -130,7 +145,8 @@ public class Login extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // processRequest(request, response);
-        request.getSession().invalidate();
+        //TODO add a logoof ...done like this for now so that we tranfer the shopcart 
+        //request.getSession().invalidate();
         if ("Register".compareToIgnoreCase(request.getParameter("action")) == 0) {
             handleRegister(request, response);
         }

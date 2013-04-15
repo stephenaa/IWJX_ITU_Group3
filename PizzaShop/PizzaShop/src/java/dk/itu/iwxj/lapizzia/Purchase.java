@@ -2,21 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package dk.itu.iwxj.lapizzia;
 
 import dk.itu.iwxj.lapizzia.data.OrderDataBean;
-import dk.itu.iwxj.lapizzia.data.ProductDataBean;
 import dk.itu.iwxj.lapizzia.model.Order;
 import dk.itu.iwxj.lapizzia.model.OrderItem;
-import dk.itu.iwxj.lapizzia.model.Product;
 import dk.itu.iwxj.lapizzia.model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -30,7 +27,6 @@ import javax.servlet.http.HttpSession;
  * @author chwu and others
  */
 public class Purchase extends HttpServlet {
-   
 
     /**
      * Processes requests for both HTTP
@@ -105,7 +101,7 @@ public class Purchase extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("message", msg);
         String page = "purchase.jsp";
-        
+
         Map basket = (TreeMap) session.getAttribute("basket");
         if (request.getParameter("action").equalsIgnoreCase("AddToBasket")) {
             addToBasket(request, basket);
@@ -128,25 +124,24 @@ public class Purchase extends HttpServlet {
         //todo test are the quanty filled in with a number
         OrderItem line = new OrderItem();
         System.out.println("Adding to basket" + request.getParameterMap());
-        System.out.println("Product id:" +  request.getParameter("product_id") + ", quantity:" + request.getParameter("qty"));
+        System.out.println("Product id:" + request.getParameter("product_id") + ", quantity:" + request.getParameter("qty"));
         request.getSession().setAttribute("message", "");
         line.initFromRequest(request);
         basket.put(line.getName(), line);
     }
 
-    
     public String checkout(HttpServletRequest request) {
         String page = "done.jsp";
         Logger.getLogger(Purchase.class.getName()).log(Level.SEVERE, null, "in checkout");
         HttpSession session = request.getSession();
         Map basket = (TreeMap) session.getAttribute("basket");
-
-        if (basket.isEmpty()) {
-            session.setAttribute("message", "Fool you can't pay an empty basket!!");
+        User user = (User) request.getSession().getAttribute("user");
+        if  (user == null) {
+            session.setAttribute("message", "You need to login to add the order");
             return "checkout.jsp";
         } else {
             session.setAttribute("message", "");
-            User user = (User) request.getSession().getAttribute("user");
+            user = (User) request.getSession().getAttribute("user");
             int keys = UUIDUtilty.INSTANCE.getUUID();
             //TODO validate parameter from page
             Order order = new Order();
