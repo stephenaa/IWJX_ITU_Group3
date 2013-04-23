@@ -16,6 +16,25 @@
         <servlet-name>Users</servlet-name>
         <servlet-class>dk.itu.iwxj.lapizzia.Users</servlet-class>
     </servlet>
+    
+    
+    <servlet>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <servlet-class>
+            com.sun.jersey.spi.container.servlet.ServletContainer
+        </servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>dk.itu.iwxj.lapizzia.resources</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        </servlet>
+        <servlet-mapping>
+            <servlet-name>Jersey REST Service</servlet-name>
+            <url-pattern>/rest/*</url-pattern>
+        </servlet-mapping>       
+
+              
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
         <url-pattern>/Login</url-pattern>

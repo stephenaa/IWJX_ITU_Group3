@@ -12,6 +12,13 @@ import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,9 +32,11 @@ import org.xml.sax.SAXException;
  *
  * @author sma
  */
+@XmlRootElement(name="pizza")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Product implements Serializable{
 
-    private int id;
+    private int id;    
     private String name;
     private String description;
     private int price;
@@ -45,17 +54,20 @@ public class Product implements Serializable{
      * Constructs an XML representation of the Pizza
      * @return XML representing the Pizza
      */
-    public String toXml() {
-        StringWriter writer = new StringWriter();
-        PrintWriter printer = new PrintWriter(writer);
-        
-        printer.printf("<pizza id='%d'>", this.id);
-        printer.printf("<name>%s</name>", this.name);
-        printer.printf("<description>%s</description>", this.description);
-        printer.printf("<price>%s</price>", this.price);
-        printer.printf("</pizza>");
-        
-        return writer.toString();
+    public String toXml()  {        
+        try {
+            StringWriter writer = new StringWriter();
+            JAXBContext jaxbContext = JAXBContext.newInstance(this.getClass());
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            StringWriter result = new StringWriter();
+            jaxbMarshaller.marshal(this, result);     
+            return(result.toString());       
+        } catch (JAXBException ex) {
+            Logger.getLogger(Product.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
 
@@ -92,6 +104,7 @@ public class Product implements Serializable{
     /**
      * @return the name
      */
+    @XmlElement(name = "name", required = true, nillable = false)
     public String getName() {
         return name;
     }
@@ -106,6 +119,7 @@ public class Product implements Serializable{
     /**
      * @return the description
      */
+    @XmlElement(name = "description", required = true, nillable = false)
     public String getDescription() {
         return description;
     }

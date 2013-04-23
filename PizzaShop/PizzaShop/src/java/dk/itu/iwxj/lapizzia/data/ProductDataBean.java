@@ -92,33 +92,33 @@ public class ProductDataBean {
         return product;
     }
 
-    public List<Product> list() {
-        List<Product> list = new ArrayList<Product>();
-
-        Connection connection = DatabaseManager.getConnection();
-        PreparedStatement getProductsStmt;
-        try {
-            getProductsStmt = connection.prepareStatement(
-                    "SELECT * FROM products ORDER BY name");
-
-            ResultSet results = getProductsStmt.executeQuery();
-
-            while (results.next()) {
-                Product product = new Product();
-                product.setId(results.getInt("productid"));
-                product.setName(results.getString("name"));
-                product.setDescription(results.getString("description"));
-                product.setPrice(results.getInt("price"));
-
-                list.add(product);
-            }
-            results.close();
-        } catch (Exception ex) {
-            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return list;
-    }
+//    public List<Product> list() {
+//        List<Product> list = new ArrayList<Product>();
+//
+//        Connection connection = DatabaseManager.getConnection();
+//        PreparedStatement getProductsStmt;
+//        try {
+//            getProductsStmt = connection.prepareStatement(
+//                    "SELECT * FROM products ORDER BY name");
+//
+//            ResultSet results = getProductsStmt.executeQuery();
+//
+//            while (results.next()) {
+//                Product product = new Product();
+//                product.setId(results.getInt("productid"));
+//                product.setName(results.getString("name"));
+//                product.setDescription(results.getString("description"));
+//                product.setPrice(results.getInt("price"));
+//
+//                list.add(product);
+//            }
+//            results.close();
+//        } catch (Exception ex) {
+//            Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        return list;
+//    }
 
     public List<Product> list(int start, int count) {
         List<Product> list = new ArrayList<Product>();

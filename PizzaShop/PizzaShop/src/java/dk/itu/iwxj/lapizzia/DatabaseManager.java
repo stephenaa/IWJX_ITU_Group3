@@ -20,7 +20,8 @@ public class DatabaseManager {
         if (connection == null) {
 
             try {
-                Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+               // Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+                Class.forName("org.apache.derby.jdbc.ClientDriver");
                 connection = DriverManager.getConnection("jdbc:derby://localhost:1527/LaPizzeria;user=pizza;password=gorgonzola");
             } catch (ClassNotFoundException e) {
                 System.out.println("Unable to load the driver class");
