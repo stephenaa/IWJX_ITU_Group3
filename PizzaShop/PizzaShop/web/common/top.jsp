@@ -45,7 +45,7 @@
                                                 out.println("|&nbsp;&nbsp;<a href='/PizzaShop/Login'> Hello &nbsp;" + user.getUsername() + "</a>&nbsp;&nbsp;|");
                                             }%>
 
-                                        <% if (user != null && user.getRole() > 10) {
+                                        <% if (user != null && user.getRole() >= 10) {
                                                 out.println("<a href=\"admin.jsp\">Administration</a>");
                                             }%>
                                     </span>
