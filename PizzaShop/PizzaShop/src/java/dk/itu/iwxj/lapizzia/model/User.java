@@ -8,8 +8,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+//import javax.mail.internet.AddressException;
+//import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -92,6 +92,10 @@ public class User implements Serializable{
             return false;
         }
         boolean result = true;
+        
+        // TODO: Lav valideringen på en anden måde
+        
+        /*
         try {
             InternetAddress emailAddr = new InternetAddress(aEmailAddress);
             if (!hasNameAndDomain(aEmailAddress)) {
@@ -100,6 +104,7 @@ public class User implements Serializable{
         } catch (AddressException ex) {
             result = false;
         }
+        */
         return result;
     }
 
