@@ -6,7 +6,6 @@ package dk.itu.iwxj.lapizzia.data;
 
 import dk.itu.iwxj.lapizzia.DatabaseManager;
 import dk.itu.iwxj.lapizzia.model.Product;
-import dk.itu.iwxj.lapizzia.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,8 +20,9 @@ import java.util.logging.Logger;
  * @author chwu, sma
  */
 public class ProductDataBean {
+
     private static ProductDataBean instance;
-    
+
     public static ProductDataBean getInstance() {
         if (instance == null) {
             instance = new ProductDataBean();
@@ -30,12 +30,9 @@ public class ProductDataBean {
         return instance;
     }
 
-    
-    private ProductDataBean () {
-        
+    private ProductDataBean() {
     }
-    
-    
+
     public boolean add(Product product) {
         try {
             Connection connection = DatabaseManager.getConnection();
@@ -119,15 +116,14 @@ public class ProductDataBean {
 //
 //        return list;
 //    }
-
-    public List<Product> list(int start, int count) {
+    public List<Product> list(int start, int count, int priceMin, int priceMax) {
         List<Product> list = new ArrayList<Product>();
 
         Connection connection = DatabaseManager.getConnection();
         PreparedStatement getProductsStmt;
         try {
             getProductsStmt = connection.prepareStatement(
-                    "SELECT * FROM (SELECT ROW_NUMBER() OVER() AS rownum, products.* FROM products ORDER BY name ) AS tmp WHERE rownum > ? AND rownum <= ?");
+                    "SELECT * FROM (SELECT ROW_NUMBER() OVER() AS rownum, products.* FROM products where price between " + priceMin + " and  " + priceMax + "  ORDER BY name  ) AS tmp WHERE rownum > ? AND rownum <= ?");
 
             getProductsStmt.setInt(1, start);
             getProductsStmt.setInt(2, start + count);
@@ -151,14 +147,14 @@ public class ProductDataBean {
         return list;
     }
 
-    public int numberOfProducts() {
+    public int numberOfProducts(int priceMin, int priceMax) {
         Connection connection = DatabaseManager.getConnection();
         int number = 0;
 
         PreparedStatement getProductsStmt;
         try {
             getProductsStmt = connection.prepareStatement(
-                    "SELECT count(*) FROM products",
+                    "SELECT count(*) FROM products where price between " + priceMin + " and  " + priceMax,
                     ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
             ResultSet results = getProductsStmt.executeQuery();
@@ -190,23 +186,23 @@ public class ProductDataBean {
 
         return false;
     }
-    
+
     /**
-     * Update product in database
-     * TODO: Extend to handle all properties of the model
+     * Update product in database TODO: Extend to handle all properties of the
+     * model
+     *
      * @param product
-     * @return 
+     * @return
      */
-    public boolean update(Product product)
-    {
+    public boolean update(Product product) {
         try {
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement stmt =
                     connection.prepareStatement("UPDATE products SET price = ?, name = ?, description = ? WHERE productid=?");
 
             stmt.setInt(1, product.getPrice());
-            stmt.setString(2,product.getName());
-            stmt.setString(3,product.getDescription());
+            stmt.setString(2, product.getName());
+            stmt.setString(3, product.getDescription());
             stmt.setInt(4, product.getId());
 
             if (stmt.executeUpdate() != 0) {
@@ -216,8 +212,7 @@ public class ProductDataBean {
         } catch (SQLException ex) {
             Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-      return true;   
+
+        return true;
     }
-    
 }
