@@ -22,8 +22,6 @@ import javax.ws.rs.Produces;
  * http://www.mkyong.com/webservices/jax-rs/jax-rs-pathparam-example/
  * http://technotes.tostaky.biz/2012/08/jaxb-annotation-summary-crash-course.html
  */
-
-
 /**
  * REST Web Service
  *
@@ -42,38 +40,44 @@ public class PizzaResource {
     }
 
     /**
-     * Retrieves representation of an instance of dk.itu.iwxj.lapizzia.resources.PizzaResource
+     * Retrieves representation of an instance of
+     * dk.itu.iwxj.lapizzia.resources.PizzaResource
+     *
      * @return an instance of java.lang.String
-     */    
+     */
+    @Path("{priceMin}/{priceMax}")
     @GET
-    @Produces("application/xml")    
-    public String getXml() {                 
+    @Produces("application/xml")
+    public String getXml(
+            @PathParam("priceMin") int priceMin,
+            @PathParam("priceMax") int priceMax) {
         StringBuilder builder = new StringBuilder();
         builder.append("<pizzalist>");
-        
-            List<Product> pizze = ProductDataBean.getInstance().list(0,100);
-            for(Product p : pizze) {
-                builder.append(p.toXml());
-            }
+
+        List<Product> pizze = ProductDataBean.getInstance().list(0, 100, priceMin, priceMax);
+        for (Product p : pizze) {
+            builder.append(p.toXml());
+        }
         builder.append("</pizzalist>");
         return builder.toString();
-    }   
-        
+    }
+
     @Path("{id}")
     @GET
-    @Produces("application/xml")        
-    public String getXml(@PathParam("id") String pizzaId) {                 
+    @Produces("application/xml")
+    public String getXml(@PathParam("id") String pizzaId) {
         StringBuilder builder = new StringBuilder();
         builder.append("<pizzalist>");
-        
-            Product pizza = ProductDataBean.getInstance().get(Integer.parseInt(pizzaId));
-            builder.append(pizza.toXml());
+
+        Product pizza = ProductDataBean.getInstance().get(Integer.parseInt(pizzaId));
+        builder.append(pizza.toXml());
         builder.append("</pizzalist>");
         return builder.toString();
-    }        
-    
+    }
+
     /**
      * PUT method for updating or creating an instance of PizzaResource
+     *
      * @param content representation for the resource
      * @return an HTTP response with content of the updated or created resource.
      */
