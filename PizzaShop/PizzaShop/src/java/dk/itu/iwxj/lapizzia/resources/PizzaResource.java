@@ -53,7 +53,6 @@ public class PizzaResource {
             @PathParam("priceMax") int priceMax) {
         StringBuilder builder = new StringBuilder();
         builder.append("<pizzalist>");
-
         List<Product> pizze = ProductDataBean.getInstance().list(0, 100, priceMin, priceMax);
         for (Product p : pizze) {
             builder.append(p.toXml());
