@@ -47,7 +47,7 @@ function checkPassword(password){
                  
 }
 function checkConPassword(confirmpassword){
-    if((confirmpassword.value == null) || (confirmpassword.value == "") || (confirmpassword.value.length<6)||(password.value != confirmpassword.value)){
+    if((confirmpassword.value == null) || (confirmpassword.value == "") || (confirmpassword.value.length<6)){
         var messagePass = "<img src=\"img/wrong-icon.jpg\">"+"At least 6 Characters, it should match the previous password input.";
                     
     } else {
