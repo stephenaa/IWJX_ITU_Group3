@@ -118,7 +118,7 @@ public class ProductDataBean {
 //    }
     public List<Product> list(int start, int count, int priceMin, int priceMax) {
         List<Product> list = new ArrayList<Product>();
-
+        System.out.println("Min:" + priceMin + ", max:" + priceMax);
         Connection connection = DatabaseManager.getConnection();
         PreparedStatement getProductsStmt;
         try {
@@ -143,7 +143,7 @@ public class ProductDataBean {
         } catch (Exception ex) {
             Logger.getLogger(UserDataBean.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+           
         return list;
     }
 

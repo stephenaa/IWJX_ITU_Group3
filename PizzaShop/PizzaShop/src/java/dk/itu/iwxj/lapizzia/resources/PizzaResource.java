@@ -45,14 +45,16 @@ public class PizzaResource {
      *
      * @return an instance of java.lang.String
      */
-    @Path("{priceMin}/{priceMax}")
+    //@Path("{priceMin}/{priceMax}")
     @GET
     @Produces("application/xml")
-    public String getXml(
-            @PathParam("priceMin") int priceMin,
-            @PathParam("priceMax") int priceMax) {
+    public String getXml() {
+      //      @PathParam("priceMin") int priceMin,
+       //     @PathParam("priceMax") int priceMax) {
         StringBuilder builder = new StringBuilder();
         builder.append("<pizzalist>");
+        int priceMin = 0;
+        int priceMax = 100;
         List<Product> pizze = ProductDataBean.getInstance().list(0, 100, priceMin, priceMax);
         for (Product p : pizze) {
             builder.append(p.toXml());

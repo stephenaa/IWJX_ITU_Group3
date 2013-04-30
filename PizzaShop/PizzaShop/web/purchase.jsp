@@ -3,6 +3,8 @@
     Created on : 14-03-2013, 17:09:26
     Author     : vanl
 --%>
+<%@page import="dk.itu.iwxj.lapizzia.data.PartnerProductDataBean"%>
+<%@page import="dk.itu.iwxj.lapizzia.model.PartnerProduct"%>
 <%@page import="dk.itu.iwxj.lapizzia.data.ProductDataBean"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.TreeMap"%>
@@ -15,16 +17,21 @@
 
 <%
     int currentPage = 1;
-   if(request.getParameter("current_page") != null) {
+    int priceMin = 0, priceMax = 999;
+    
+    if(request.getParameter("current_page") != null) {
         currentPage = Integer.parseInt(request.getParameter("current_page"));
     }
-    int priceMin = 0, priceMax = 999;
-    if (request.getParameter("priceMin") != null) {
-        priceMin = Integer.parseInt(request.getParameter("priceMin"));
+        
+    Object oMin = request.getSession().getAttribute("priceMin");
+    if (oMin != null) {
+        priceMin = (Integer)oMin;
     }
-    if (request.getParameter("priceMax") != null) {
-        priceMax = Integer.parseInt(request.getParameter("priceMax"));
-    }
+    Object oMax = request.getSession().getAttribute("priceMax");
+    if (oMax != null) {
+        priceMax = (Integer)oMax;
+    }    
+
     List<Product> pizze = ProductDataBean.getInstance().list((currentPage - 1) * 10, 10, priceMin, priceMax);
     int totalPizze = ProductDataBean.getInstance().numberOfProducts(priceMin, priceMax);
     int totalPages = totalPizze / 10;
@@ -48,9 +55,7 @@
                 out.println("</tr>");
                 out.println("</form></td>");
             }
-
         %>                            
-
     </table>
 
 </div>
@@ -67,15 +72,37 @@
 <div>  
     <%
                 if(currentPage > 1) {
-                    out.print("<div><a href=\"?current_page=" + (currentPage-1)+ "&amp;priceMax=" + priceMax +"&amp;priceMin=" + (priceMin)+ "\">&lt;&lt; Previous 10</a></div>");
-        }
+                    out.print("<div><a href=\"?current_page=" + (currentPage-1)+ "\">&lt;&lt; Previous 10</a></div>");
+                }
 
                 if(currentPage <= totalPages ) {
-                    out.print("<div><a href=\"?current_page=" + (currentPage+1)+"&amp;priceMax=" + priceMax +"&amp;priceMin=" + priceMin+ "\">&gt;&gt; Next 10</a></div>");
-        }
-        out.print("<div><form><input type='text' name='priceMin' value='" + priceMin + "'/>");
-        out.print("<input type='text' name='priceMax' value='" + priceMax + "'/><input type=\"submit\" value=\"filter\" name=\"action\"></div></form>");
-    %>
+                    out.print("<div><a href=\"?current_page=" + (currentPage+1)+ "\">&gt;&gt; Next 10</a></div>");
+                } 
+                out.print("<div><form action=\"Purchase\" method=\"post\"><input type='text' name='priceMin' value='" + priceMin + "'/>");
+                out.print("<input type='text' name='priceMax' value='" + 
+                        priceMax + 
+                        "'/><input type=\"submit\" value=\"filter\" name=\"action\">");
+                out.print("</div></form>");
+
+                if(currentPage > totalPages ) {
+                    // Also show the pizzas from the other group
+                    out.print("<p><strong>We also offer these pizzas form our partners:</strong></p>");
+                    List<PartnerProduct>partnerPizzas = PartnerProductDataBean.getInstance().list(priceMin, priceMax);
+                    pizzeShown = 0;
+                    out.print("<table class='pizzalist' id='orderTable'>");
+                    for (PartnerProduct p : partnerPizzas) {
+                        pizzeShown++;                        
+                        out.println("<tr>");
+                        out.println("<td>" + p.getId() + "</td>");
+                        out.println("<td>" + p.getName() + "</td>");
+                        out.println("<td>" + p.getPrice() + ",-</td>");
+                        out.println("</tr>");
+                        
+                    }
+                    out.print("</table>");
+                }
+        
+        %>
 </div> 
 <script language="javascript" type="text/javascript" >
     function initPage() {

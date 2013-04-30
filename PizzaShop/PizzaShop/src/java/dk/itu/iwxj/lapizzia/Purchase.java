@@ -103,18 +103,28 @@ public class Purchase extends HttpServlet {
         String page = "purchase.jsp";
 
         Map basket = (TreeMap) session.getAttribute("basket");
+
         if (request.getParameter("action").equalsIgnoreCase("AddToBasket")) {
             addToBasket(request, basket);
 
         }
+
         if (request.getParameter("action").equalsIgnoreCase("remove")) {
             basket.remove((String) request.getParameter("name"));
         }
+        
         if (request.getParameter("action").equalsIgnoreCase("checkout")) {
             page = "checkout.jsp";
         }
+
         if (request.getParameter("action").equalsIgnoreCase("pay")) {
             page = checkout(request);
+        }        
+        
+        if (request.getParameter("action").equalsIgnoreCase("filter")) {
+            request.getSession().setAttribute("priceMin", Integer.parseInt(request.getParameter("priceMin")));
+            request.getSession().setAttribute("priceMax", Integer.parseInt(request.getParameter("priceMax")));
+            System.out.println("Session:" + request.getSession());
         }
 
         response.sendRedirect(page);
