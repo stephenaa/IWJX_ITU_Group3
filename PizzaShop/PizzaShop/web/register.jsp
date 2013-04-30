@@ -4,20 +4,28 @@
     Author     : chwu
 --%>
 
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> --%>
  <%@include file="/common/top.jsp" %>
-
+  <table>
         <%
+List<String> list = (List)session.getAttribute("Check");        
             if (session.getAttribute("Check") == null) {
                 session.setAttribute("Check", "");
             }
-        %>
-        <table>
-        <c:forEach items="${Check}" var="Checklist">
-            <tr><td class='red' colspan="2">&#149;<c:out value='${Checklist}'/></td></tr> 
-            </c:forEach>
+if(list!=null){
+for (String s: list){
+ out.println("<tr>");
+ out.println("<td colspan = \"2\" style=\"color:red\">"+s+"</td>");
+ out.println("</tr>");
+} 
+}
 
+
+%>
+ 
         <form action="Login" method="post" id="myForm">
            
                     <tr>

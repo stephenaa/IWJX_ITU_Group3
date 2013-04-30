@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 //import javax.mail.internet.AddressException;
 //import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author chwu
  */
-public class User implements Serializable{
+public class User implements Serializable {
 
     private int userid;
     private String username;
@@ -28,9 +30,17 @@ public class User implements Serializable{
     private int role = 1;
     private boolean validationCheck = true;
     public ArrayList<String> outputMessage = new ArrayList<String>();
-   
+    private Pattern pattern;
+    private Matcher matcher;
+    private static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-    public boolean initFromRequest(HttpServletRequest request) throws IndexOutOfBoundsException{
+    public User() {
+        pattern = Pattern.compile(EMAIL_PATTERN);
+    }
+
+    public boolean initFromRequest(HttpServletRequest request) throws IndexOutOfBoundsException {
         request.getSession().setAttribute("Check", "");
 
 
@@ -50,19 +60,19 @@ public class User implements Serializable{
 
         } else {
             outputMessage.add("password is NOT match, please try it again");
-                 validationCheck = false;
+            validationCheck = false;
         }
 
         if ((request.getParameter("password").length() <= 6) || (request.getParameter("password").matches("^([a-zA-Z+]+[0-9+]+[&@!#+]+)$ "))) {
             outputMessage.add("password should contain at least 6 characters, at least letter character, and at least one non-digit/letter-character");
-                        validationCheck = false;
+            validationCheck = false;
         }
 
 
 
         if ((!isInteger(request.getParameter("zipcode"))) || (request.getParameter("zipcode").length() != 4)) {
             outputMessage.add("Zipcode should be a 4-digit number");
-                        validationCheck = false;
+            validationCheck = false;
 
         }
 
@@ -70,10 +80,10 @@ public class User implements Serializable{
             outputMessage.add("The Email address  is invalided.");
             validationCheck = false;
         }
-        
-        for(String s:outputMessage){
-        System.out.println(s);
-    }
+
+        for (String s : outputMessage) {
+            System.out.println(s);
+        }
         request.getSession().setAttribute("Check", outputMessage);
         return validationCheck;
     }
@@ -87,27 +97,38 @@ public class User implements Serializable{
         }
     }
 
-    public static boolean isValidEmailAddress(String aEmailAddress) {
+    public boolean isValidEmailAddress(final String aEmailAddress) {
+
         if (aEmailAddress == null) {
             return false;
         }
         boolean result = true;
-        
-        // TODO: Lav valideringen på en anden måde
-        
-        /*
-        try {
-            InternetAddress emailAddr = new InternetAddress(aEmailAddress);
-            if (!hasNameAndDomain(aEmailAddress)) {
-                result = false;
-            }
-        } catch (AddressException ex) {
+
+        matcher = pattern.matcher(aEmailAddress);
+        if (!matcher.matches()) {
             result = false;
         }
-        */
         return result;
     }
+//    public static boolean isValidEmailAddress(String aEmailAddress) {
+//        if (aEmailAddress == null) {
+//            return false;
+//        }
+//        boolean result = true;
 
+    // TODO: Lav valideringen på en anden måde
+    /*
+     try {
+     InternetAddress emailAddr = new InternetAddress(aEmailAddress);
+     if (!hasNameAndDomain(aEmailAddress)) {
+     result = false;
+     }
+     } catch (AddressException ex) {
+     result = false;
+     }
+     */
+//        return result;
+//    }
     private static boolean hasNameAndDomain(String aEmailAddress) {
         String[] tokens = aEmailAddress.split("@");
         return tokens.length == 2
@@ -122,12 +143,13 @@ public class User implements Serializable{
 
     /**
      * Constructs an XML representation of the Pizza
+     *
      * @return XML representing the Pizza
      */
     public String toXml() {
         StringWriter writer = new StringWriter();
         PrintWriter printer = new PrintWriter(writer);
-        
+
         printer.printf("<user id='%d'>", this.userid);
         printer.printf("<name>%s</name>", this.username);
         printer.printf("<email>%s</email>", this.email);
@@ -135,10 +157,10 @@ public class User implements Serializable{
         printer.printf("<address>%s</address>", this.address);
         printer.printf("<zipcode>%s</zipcode>", this.zipcode);
         printer.printf("</user>");
-        
+
         return writer.toString();
     }
-    
+
     /**
      * @return the userid
      */
