@@ -4,6 +4,7 @@
  */
 package dk.itu.iwxj.lapizzia.resources;
 
+import dk.itu.iwxj.lapizzia.NumbersUtilty;
 import dk.itu.iwxj.lapizzia.data.ProductDataBean;
 import dk.itu.iwxj.lapizzia.model.Product;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 
 /*
@@ -40,24 +42,30 @@ public class PizzaResource {
     }
 
     /**
-     * Retrieves representation of an instance of
-     * dk.itu.iwxj.lapizzia.resources.PizzaResource
+     * Retrieves representation of a list of the products(pizze).
+     *
+     * dk.itu.iwxj.lapizzia.resources.PizzaResource TODO fetch min/max of price
+     * from DB instead of hard code them.
      *
      * @return an instance of java.lang.String
      */
-    //@Path("{priceMin}/{priceMax}")
     @GET
     @Produces("application/xml")
-    public String getXml() {
-      //      @PathParam("priceMin") int priceMin,
-       //     @PathParam("priceMax") int priceMax) {
+    public String getXml(@QueryParam("priceMin") String priceMin,
+            @QueryParam("priceMax") String priceMax) {
         StringBuilder builder = new StringBuilder();
+        int priceMinInt = -1, priceMaxInt = -1;
         builder.append("<pizzalist>");
-        int priceMin = 0;
-        int priceMax = 100;
-        List<Product> pizze = ProductDataBean.getInstance().list(0, 100, priceMin, priceMax);
-        for (Product p : pizze) {
-            builder.append(p.toXml());
+        
+        //validate, and ensure param to db in properly initialized as param is optional
+        priceMinInt = NumbersUtilty.INSTANCE.isInteger(priceMin) ? Integer.parseInt(priceMin) : 0;
+        priceMaxInt = NumbersUtilty.INSTANCE.isInteger(priceMax) ? Integer.parseInt(priceMax) : 999;
+
+        if (NumbersUtilty.INSTANCE.isMaxGreaterThanMin(priceMinInt, priceMaxInt)) {
+            List<Product> pizze = ProductDataBean.getInstance().list(0, 100, priceMinInt, priceMaxInt);
+            for (Product p : pizze) {
+                builder.append(p.toXml());
+            }
         }
         builder.append("</pizzalist>");
         return builder.toString();
@@ -70,7 +78,7 @@ public class PizzaResource {
         StringBuilder builder = new StringBuilder();
         builder.append("<pizzalist>");
 
-        Product pizza = ProductDataBean.getInstance().get(Integer.parseInt(pizzaId));
+        Product pizza = ProductDataBean.getInstance().get(NumbersUtilty.INSTANCE.isInteger(pizzaId) ? Integer.parseInt(pizzaId) : 0);
         builder.append(pizza.toXml());
         builder.append("</pizzalist>");
         return builder.toString();
