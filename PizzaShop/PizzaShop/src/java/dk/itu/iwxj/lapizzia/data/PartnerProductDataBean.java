@@ -10,6 +10,7 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import dk.itu.iwxj.lapizzia.model.PartnerProduct;
+import dk.itu.iwxj.lapizzia.model.PartnerProductList;
 import dk.itu.iwxj.lapizzia.model.Product;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
@@ -20,6 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
  */
 public class PartnerProductDataBean {
     private final String SERVICEURL = "http://166.78.1.65:8080/LaPizzaria.DataStore/rest/pizzas";
+    //private final String SERVICEURL =  "http://www.itu.dk/people/smoa/pizzas.xml";
     
     private static PartnerProductDataBean instance;
 
@@ -57,6 +59,8 @@ public class PartnerProductDataBean {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         
+        //PartnerProductList list = response.getEntity(PartnerProductList.class);
+                
         List<PartnerProduct> products = response.getEntity(new GenericType<List<PartnerProduct>>() {            
         });        
         
