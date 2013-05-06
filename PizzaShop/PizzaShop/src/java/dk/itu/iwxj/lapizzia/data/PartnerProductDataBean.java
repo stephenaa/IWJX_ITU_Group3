@@ -10,7 +10,6 @@ import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import dk.itu.iwxj.lapizzia.model.PartnerProduct;
-import dk.itu.iwxj.lapizzia.model.PartnerProductList;
 import dk.itu.iwxj.lapizzia.model.Product;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
@@ -45,7 +44,12 @@ public class PartnerProductDataBean {
         return null;
     }
 
-    
+    /**
+     * Retreive a list of pizzas from a prtner site
+     * @param priceMin
+     * @param priceMax
+     * @return 
+     */
     public List<PartnerProduct> list(int priceMin, int priceMax) {
         Client c = Client.create();
         WebResource webResource = c.resource(SERVICEURL);
@@ -54,13 +58,11 @@ public class PartnerProductDataBean {
         params.add("priceMin", Integer.toString(priceMin));
         params.add("priceMax", Integer.toString(priceMax));
         ClientResponse response = webResource.queryParams(params).accept("application/xml").get(ClientResponse.class);
-
+        
         if (response.getStatus() != 200) {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
-        
-        //PartnerProductList list = response.getEntity(PartnerProductList.class);
-                
+                        
         List<PartnerProduct> products = response.getEntity(new GenericType<List<PartnerProduct>>() {            
         });        
         
